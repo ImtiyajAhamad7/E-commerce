@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "./Loader"; // Assuming you have a Loader component for the loading state
+import { useDispatch } from "react-redux";
+import { addToCart, cartLength } from "../store/slices/cartSlice";
 
 const ProductDetail = () => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(true);
   const [img, setImage] = useState();
   const { id } = useParams();
+
+
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+    dispatch(cartLength()); // Update the cart length in the Redux store    
+  };
+
+
 
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${id}`)
@@ -81,7 +93,7 @@ const ProductDetail = () => {
 
           {/* Action buttons */}
           <div className="d-grid gap-2 d-md-block mt-4">
-            <button className="btn btn-primary btn-lg me-2" type="button">
+            <button className="btn btn-primary btn-lg me-2" type="button" onClick={handleAddToCart}>
               Add to Cart
             </button>
             <button className="btn btn-success btn-lg" type="button">

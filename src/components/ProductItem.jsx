@@ -25,7 +25,7 @@ const ProductItem = ({ imgs, title, brand, category, id }) => {
           >
             View Details
           </Link>
-          <AddToCartButton item={{ imgs, title, brand, category, id }} />
+          <AddToCartButton item={{ imgs, title, brand, category, id }}  />
         </div>
       </div>
     </div>

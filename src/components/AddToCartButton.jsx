@@ -1,12 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../store/slices/cartSlice";
+import { addToCart, cartLength } from "../store/slices/cartSlice";
 
-const AddToCartButton = ({ item }) => {
+const AddToCartButton = (props) => {
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    dispatch(addToCart(item));
+    dispatch(addToCart(props.item));
+    dispatch(cartLength()); // Update the cart length in the Redux store    
   };
 
   return (
