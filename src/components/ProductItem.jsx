@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import AddToCartButton from "./AddToCartButton.jsx";
 
-const ProductItem = ({ imgs, title, brand, category, id }) => {
+const ProductItem = ({ imgs, title, brand, category, id, prices }) => {
   // const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
   return (
@@ -25,7 +25,9 @@ const ProductItem = ({ imgs, title, brand, category, id }) => {
           >
             View Details
           </Link>
-          <AddToCartButton item={{ imgs, title, brand, category, id }} />
+          <AddToCartButton
+            item={{ imgs, title, brand, category, id, prices }}
+          />
         </div>
       </div>
     </div>

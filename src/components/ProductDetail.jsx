@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Loader from "./Loader"; // Assuming you have a Loader component for the loading state
+import Loader from "./Loader"; // Assuming you have a Loader component
+import useFetch from "../utils/useFetch"; // Custom hook for fetching data
+import AddToCartButton from "./AddToCartButton"; // Button component to add items to cart
+import { Link } from "react-router-dom";
 
-const ProductDetail = () => {
-  const [product, setProduct] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [img, setImage] = useState();
+const DataDetail = () => {
   const { id } = useParams();
+  const { data, loading, error } = useFetch(
+    `https://dummyjson.com/products/${id}`,
+    true
+  );
 
-  useEffect(() => {
-    fetch(`https://dummyjson.com/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
-        setImage(data.thumbnail); // Directly setting the data as the product
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching the product data:", error);
-        setLoading(false);
-      });
-  }, [id]); // Dependency on id to refetch when the id changes
+  const [img, setImage] = useState(data?.thumbnail);
 
   // Check if dimensions exist and format them
   const formatDimensions = (dimensions) => {
@@ -28,94 +20,100 @@ const ProductDetail = () => {
     const { width, height, depth } = dimensions;
     return `Width: ${width}cm, Height: ${height}cm, Depth: ${depth}cm`;
   };
+
   const changeImage = (image) => {
     setImage(image);
   };
+
   return loading ? (
-    <Loader /> // Assuming you have a Loader component
+    <Loader />
   ) : (
     <div className="container mt-5">
       <div className="row">
-        {/* Product Image Section */}
+        {/* Image Section */}
         <div className="col-md-6">
-          <div className="product-gallery">
+          <div className="data-gallery">
             <img
-              src={img}
-              alt={product.title}
+              src={img || data.thumbnail}
+              alt={data.title}
               className="img-fluid"
               width={"300px"}
               height={"250px"}
             />
           </div>
-          {/* Optionally add more images as thumbnails */}
           <div className="row mt-3">
-            {product.images &&
-              product.images.map((image, index) => (
-                <div className="col-3" key={index}>
-                  <img
-                    src={image}
-                    alt={`Product ${index}`}
-                    className="img-thumbnail"
-                    onClick={() => {
-                      changeImage(image);
-                    }}
-                  />
-                </div>
-              ))}
+            {data.images && data.images.map((image, index) => (
+              <div className="col-3" key={index}>
+                <img
+                  src={image}
+                  alt={`data ${index}`}
+                  className="img-thumbnail"
+                  onClick={() => changeImage(image)}
+                />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Product Information Section */}
+        {/* Information Section */}
         <div className="col-md-6">
-          <h1 className="display-5">{product.title}</h1>
+          <h1 className="display-5">{data.title}</h1>
           <p className="text-muted">
-            <strong>Brand:</strong> {product.brand}
+            <strong>Brand:</strong> {data.brand}
           </p>
           <p className="text-muted">
-            <strong>Category:</strong> {product.category}
+            <strong>Category:</strong> {data.category}
           </p>
-
-          <h3 className="text-success">${product.price}</h3>
-
-          <p className="product-description mt-4">{product.description}</p>
+          <h3 className="text-success">${data.price}</h3>
+          <p className="data-description mt-4">{data.description}</p>
 
           {/* Action buttons */}
           <div className="d-grid gap-2 d-md-block mt-4">
-            <button className="btn btn-primary btn-lg me-2" type="button">
-              Add to Cart
-            </button>
-            <button className="btn btn-success btn-lg" type="button">
+            <AddToCartButton
+              item={{
+                img: data.thumbnail,
+                title: data.title,
+                brand: data.brand,
+                category: data.category,
+                id: data.id,
+                price: data.price,
+              }}
+            />
+            <Link
+              to={"/checkout"}
+              className="btn btn-success btn-sm"
+              type="button"
+            >
               Buy Now
-            </button>
+            </Link>
           </div>
 
-          {/* Optional Product Rating */}
+          {/* Rating Section */}
           <div className="mt-4">
             <strong>Rating: </strong>
             <span className="badge bg-warning text-dark">
-              {product.rating} / 5
+              {data.rating} / 5
             </span>
           </div>
         </div>
       </div>
 
-      {/* Product Specifications Section */}
+      {/* Specifications Section */}
       <div className="row mt-5">
         <div className="col-12">
-          <h4>Product Specifications</h4>
+          <h4>Specifications</h4>
           <ul className="list-group">
             <li className="list-group-item">
-              <strong>Weight:</strong> {product.weight || "N/A"}
+              <strong>Weight:</strong> {data.weight || "N/A"}
             </li>
             <li className="list-group-item">
-              <strong>Dimensions:</strong>{" "}
-              {formatDimensions(product.dimensions)}
+              <strong>Dimensions:</strong> {formatDimensions(data.dimensions)}
             </li>
             <li className="list-group-item">
-              <strong>Color:</strong> {product.color || "N/A"}
+              <strong>Color:</strong> {data.color || "N/A"}
             </li>
             <li className="list-group-item">
-              <strong>Warranty:</strong> {product.warranty || "N/A"}
+              <strong>Warranty:</strong> {data.warranty || "N/A"}
             </li>
           </ul>
         </div>
@@ -124,4 +122,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail;
+export default DataDetail;

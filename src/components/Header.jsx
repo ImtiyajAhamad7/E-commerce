@@ -5,7 +5,8 @@ import { IoCartOutline } from "react-icons/io5";
 import { useSelector, useDispatch } from "react-redux";
 
 const Header = () => {
-  const count = useSelector((state) => state.cart.value);
+  const count = useSelector((state) => state.cart.items);
+  console.log("cccc", count);
   const dispatch = useDispatch();
   return (
     <header className="bg-primary py-3">
@@ -33,11 +34,6 @@ const Header = () => {
                 </Link>
               </li>
 
-              <li className="nav-item">
-                <Link className="nav-link text-white" to="/AddBooks">
-                  Add Books
-                </Link>
-              </li>
               <ul className="navbar-nav ms-auto">
                 <li className="nav-item position-relative">
                   <Link
@@ -45,7 +41,7 @@ const Header = () => {
                     to="/cart"
                   >
                     <span className="cart-icon-container">
-                      <span className="cart-count">{count}</span>
+                      <span className="cart-count">{count.length}</span>
                       <IoCartOutline size={24} className="me-1" />
                     </span>
                   </Link>

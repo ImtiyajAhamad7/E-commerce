@@ -1,0 +1,15 @@
+.alert {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0; /* Start as invisible */
+  transform: translateX(100%); /* Start off-screen */
+}
+
+.alert.show {
+  opacity: 1; /* Fully visible */
+  transform: translateX(0); /* Move to original position */
+}
+
+.alert.fade-out {
+  opacity: 0; /* Fade out */
+  transform: translateX(100%); /* Slide out to the right */
+}
