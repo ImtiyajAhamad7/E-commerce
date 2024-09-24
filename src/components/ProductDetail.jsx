@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Loader from "./Loader"; // Assuming you have a Loader component
-import useFetch from "../utils/useFetch"; // Custom hook for fetching data
-import AddToCartButton from "./AddToCartButton"; // Button component to add items to cart
-import { Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import Loader from "./Loader";
+import useFetch from "../utils/useFetch";
+import AddToCartButton from "./AddToCartButton";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/slices/cartSlice";
+import { MdError } from "react-icons/md";
 
 const DataDetail = () => {
   const { id } = useParams();
@@ -11,6 +13,8 @@ const DataDetail = () => {
     `https://dummyjson.com/products/${id}`,
     true
   );
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [img, setImage] = useState(data?.thumbnail);
 
@@ -23,6 +27,25 @@ const DataDetail = () => {
 
   const changeImage = (image) => {
     setImage(image);
+  };
+
+  const handleBuyNow = () => {
+    if (data) {
+      // Dispatch addToCart action with the product details
+      dispatch(
+        addToCart({
+          id: data.id,
+          title: data.title,
+          brand: data.brand,
+          category: data.category,
+          prices: data.price,
+          image: data.thumbnail,
+          quantity: 1, // Set default quantity to 1
+        })
+      );
+      // Navigate to the checkout page
+      navigate("/checkout");
+    }
   };
 
   return loading ? (
@@ -42,16 +65,17 @@ const DataDetail = () => {
             />
           </div>
           <div className="row mt-3">
-            {data.images && data.images.map((image, index) => (
-              <div className="col-3" key={index}>
-                <img
-                  src={image}
-                  alt={`data ${index}`}
-                  className="img-thumbnail"
-                  onClick={() => changeImage(image)}
-                />
-              </div>
-            ))}
+            {data.images &&
+              data.images.map((image, index) => (
+                <div className="col-3" key={index}>
+                  <img
+                    src={image}
+                    alt={`data ${index}`}
+                    className="img-thumbnail"
+                    onClick={() => changeImage(image)}
+                  />
+                </div>
+              ))}
           </div>
         </div>
 
@@ -71,24 +95,23 @@ const DataDetail = () => {
           <div className="d-grid gap-2 d-md-block mt-4">
             <AddToCartButton
               item={{
-                img: data.thumbnail,
+                imgs: data.thumbnail,
                 title: data.title,
                 brand: data.brand,
                 category: data.category,
                 id: data.id,
-                price: data.price,
+                prices: data.price,
               }}
             />
-            <Link
-              to={"/checkout"}
+            <button
               className="btn btn-success btn-sm"
               type="button"
+              onClick={handleBuyNow} // Use handleBuyNow on click
             >
               Buy Now
-            </Link>
+            </button>
           </div>
 
-          {/* Rating Section */}
           <div className="mt-4">
             <strong>Rating: </strong>
             <span className="badge bg-warning text-dark">
@@ -118,6 +141,15 @@ const DataDetail = () => {
           </ul>
         </div>
       </div>
+
+      {error && (
+        <div className="col-12">
+          <p className="text-danger d-flex align-items-center">
+            <MdError className="me-2" size={24} /> {/* Error icon */}
+            {`${error}`}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

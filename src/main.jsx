@@ -1,24 +1,23 @@
 import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-// import App from "./App.jsx";
+
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import ProductList from "./components/ProductList.jsx";
 
-// import ProductDetail from "./components/ProductDetail.jsx";
 import store from "./store/store.js";
 import { Provider } from "react-redux";
-// import Cart from "./components/Cart.jsx";
-// import HomePage from "./components/HomePage.jsx";
+
 import Loader from "./components/Loader.jsx";
 import { lazy } from "react";
-import Checkout from "./components/Checkout.jsx";
+// import Checkout from "./components/Checkout.jsx";
 
 const App = lazy(() => import("./App.jsx"));
 const HomePage = lazy(() => import("./components/HomePage.jsx"));
 const ProductDetail = lazy(() => import("./components/ProductDetail.jsx"));
 const ProductList = lazy(() => import("./components/ProductList.jsx"));
 const Cart = lazy(() => import("./components/Cart.jsx"));
+const NotFound = lazy(() => import("./components/NotFound.jsx"));
+const Checkout = lazy(() => import("./components/Checkout.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -67,6 +66,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loader />}>
             <Checkout />
+          </Suspense>
+        ),
+      },
+      {
+        path: "*",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <NotFound />
           </Suspense>
         ),
       },

@@ -3,23 +3,27 @@ import ProductItem from "./ProductItem";
 import useFetch from "../utils/useFetch";
 import { useState } from "react";
 import Alert from "../utils/Alert";
+import { MdError } from "react-icons/md";
 
 const ProductList = () => {
   const [alert, setAlert] = useState(false);
   const [searchText, setSearchText] = useState("");
   const { data, loading, error } = useFetch(
-    "https://dummyjson.com/products",
+    "https://dummyjson.com/products", // Corrected URL
     false
   );
+
   const handleChange = (event) => {
     setSearchText(event.target.value);
   };
 
   let filteredData = data;
 
-  filteredData = data.filter((item) =>
-    item.title.toLowerCase().includes(searchText.toLowerCase())
-  );
+  if (data) {
+    filteredData = data.filter((item) =>
+      item.title.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }
 
   return (
     <div className="container mt-4">
@@ -47,7 +51,14 @@ const ProductList = () => {
             </div>
           ))}
 
-          {alert && <Alert message={`${error}`} onDismiss={setAlert(false)} />}
+          {error && (
+            <div className="col-12">
+              <p className="text-danger d-flex align-items-center">
+                <MdError className="me-2" size={24} /> {/* Error icon */}
+                {`${error}`}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

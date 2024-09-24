@@ -20,21 +20,6 @@ const Footer = () => {
                   Home
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-white">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white">
-                  Services
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-white">
-                  Contact
-                </a>
-              </li>
             </ul>
           </div>
           <div className="col-md-4">
@@ -45,8 +30,7 @@ const Footer = () => {
         </div>
         <div className="text-center mt-3">
           <small>
-            &copy; {new Date().getFullYear()} Your Company Name. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} ShoppyGLobe. All rights reserved.
           </small>
         </div>
       </div>

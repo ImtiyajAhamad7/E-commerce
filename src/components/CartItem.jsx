@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import RemoveFromCart from "./RemoveFromCart";
+import { updateItemQuantity } from "../store/slices/cartSlice";
 
 const CartItem = ({ id, title, image, prices, quantityItem }) => {
-  const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(quantityItem);
+
+  useEffect(() => {
+    dispatch(updateItemQuantity({ id, quantity }));
+  }, [quantity, dispatch, id]);
 
   const increment = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);

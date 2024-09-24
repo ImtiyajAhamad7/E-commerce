@@ -6,7 +6,7 @@ import AddToCartButton from "./AddToCartButton.jsx";
 
 const ProductItem = ({ imgs, title, brand, category, id, prices }) => {
   // const count = useSelector((state) => state.counter.value);
-  const dispatch = useDispatch();
+
   return (
     <div className="card product-card h-100 shadow-sm">
       <img src={imgs} className="card-img-top" alt={title} />
