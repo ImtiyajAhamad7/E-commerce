@@ -34,13 +34,4 @@ const ProductItem = ({ imgs, title, brand, category, id, prices }) => {
   );
 };
 
-// Define prop types for better type checking
-ProductItem.propTypes = {
-  imgs: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  brand: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-};
-
 export default ProductItem;

@@ -24,6 +24,7 @@ const Cart = () => {
           <ul>
             {cartItems.map((item) => (
               <CartItem
+                key={item.id}
                 id={item.id}
                 title={item.title}
                 prices={item.prices}
