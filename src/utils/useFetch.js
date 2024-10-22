@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const useFetch = (url, isId) => {
+const useFetch = (url, isId, method) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -11,7 +11,9 @@ const useFetch = (url, isId) => {
       setError("");
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: method,
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

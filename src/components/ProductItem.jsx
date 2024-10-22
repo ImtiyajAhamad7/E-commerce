@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+
 import { useSelector, useDispatch } from "react-redux";
 import AddToCartButton from "./AddToCartButton.jsx";
+import { isLoggedIn } from "../auth/auth.js";
 
 const ProductItem = ({ imgs, title, brand, category, id, prices }) => {
   // const count = useSelector((state) => state.counter.value);
@@ -25,9 +26,13 @@ const ProductItem = ({ imgs, title, brand, category, id, prices }) => {
           >
             View Details
           </Link>
-          <AddToCartButton
-            item={{ imgs, title, brand, category, id, prices }}
-          />
+          {isLoggedIn() ? (
+            <AddToCartButton
+              item={{ imgs, title, brand, category, id, prices }}
+            />
+          ) : (
+            <Link to={"/login"}>Add to cart</Link>
+          )}
         </div>
       </div>
     </div>

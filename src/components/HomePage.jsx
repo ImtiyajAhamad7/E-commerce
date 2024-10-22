@@ -1,5 +1,6 @@
 import React from "react";
 import ProductList from "./ProductList";
+import SignUp from "./SignUp";
 
 const HomePage = () => {
   return (
@@ -17,6 +18,7 @@ const HomePage = () => {
           <ProductList />
         </div>
       </section>
+      {/* <SignUp /> */}
     </div>
   );
 };

@@ -1,22 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import RemoveFromCart from "./RemoveFromCart";
-import { updateItemQuantity } from "../store/slices/cartSlice";
+import { updateItemQuantity } from "../store/slices/cartSlice"; // Assuming you have this in Redux
+import { Fetch } from "../utils/Fetch.jsx"; // Assuming Fetch is a utility for API requests
 
 const CartItem = ({ id, title, image, prices, quantityItem }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(quantityItem);
 
-  useEffect(() => {
-    dispatch(updateItemQuantity({ id, quantity }));
-  }, [quantity, dispatch, id]);
+  // Function to update quantity both in Redux and Backend
+  const updateQuantity = async (newQuantity) => {
+    setQuantity(newQuantity); // Update local state
 
-  const increment = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1);
+    // Dispatch to Redux store
+    dispatch(updateItemQuantity({ id, quantity: newQuantity }));
+
+    const userId = sessionStorage.getItem("userId");
+    try {
+      const dataToSend = {
+        productId: id,
+        quantity: newQuantity,
+        userId: userId,
+      };
+      await Fetch(`updateCart`, "PUT", dataToSend); // Assuming this endpoint exists
+    } catch (error) {
+      console.error("Failed to update quantity on the server:", error);
+    }
   };
 
+  // Increment quantity
+  const increment = () => {
+    updateQuantity(quantity + 1);
+  };
+
+  // Decrement quantity (should not go below 1)
   const decrement = () => {
-    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+    if (quantity > 1) {
+      updateQuantity(quantity - 1);
+    }
   };
 
   return (

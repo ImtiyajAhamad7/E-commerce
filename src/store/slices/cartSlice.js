@@ -1,10 +1,50 @@
-// store/cartSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { Fetch } from "../../utils/Fetch";
+
+// Thunk to fetch cart items from the server
+export const fetchCartItems = createAsyncThunk(
+  "cart/fetchCartItems",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await Fetch(`cart/${userId}`, "GET");
+      if (!response) {
+        return rejectWithValue("Failed to fetch cart items.");
+      }
+      const data = await response.json();
+      return data.items; // Return the cart items
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Thunk to sync cart item updates (like quantity change) with the server
+export const updateCartItem = createAsyncThunk(
+  "cart/updateCartItem",
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+    try {
+      const response = await Fetch("cart", "POST", {
+        userId,
+        productId,
+        quantity,
+      });
+      if (!response) {
+        return rejectWithValue("Failed to update cart item.");
+      }
+      const data = await response.json();
+      return data; // Return the updated cart data
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
     items: [],
+    status: null, // for tracking loading state
+    error: null, // for tracking errors
   },
   reducers: {
     addToCart(state, action) {
@@ -17,7 +57,7 @@ const cartSlice = createSlice({
         state.items.push({
           ...action.payload,
           quantity: 1,
-        }); // Add new item with quantity
+        });
       }
     },
     removeFromCart(state, action) {
@@ -31,8 +71,29 @@ const cartSlice = createSlice({
       }
     },
     clearCart(state) {
-      state.items = []; // Clear all items from the cart
+      state.items = [];
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCartItems.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchCartItems.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.items = action.payload; // Populate items with the fetched cart data
+      })
+      .addCase(fetchCartItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateCartItem.fulfilled, (state, action) => {
+        const { productId, quantity } = action.payload;
+        const existingItem = state.items.find((item) => item.id === productId);
+        if (existingItem) {
+          existingItem.quantity = quantity;
+        }
+      });
   },
 });
 

@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Loader from "./Loader";
-import useFetch from "../utils/useFetch";
 import AddToCartButton from "./AddToCartButton";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../store/slices/cartSlice";
-import { MdError } from "react-icons/md";
+import { Fetch } from "../utils/Fetch";
 
 const DataDetail = () => {
   const { id } = useParams();
-  const { data, loading, error } = useFetch(
-    `https://dummyjson.com/products/${id}`,
-    true
-  );
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [img, setImage] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [img, setImage] = useState(data?.thumbnail);
+  useEffect(() => {
+    const fetchData = async () => {
+      const dataResponse = await Fetch(`products/${id}`, "GET", null, null);
+      if (dataResponse) {
+        const productData = await dataResponse.json();
+        setData(productData);
+        setImage(productData.thumbnail);
+      }
+      setLoading(false);
+    };
 
-  // Check if dimensions exist and format them
+    fetchData();
+  }, [id]);
+
   const formatDimensions = (dimensions) => {
     if (!dimensions) return "N/A";
     const { width, height, depth } = dimensions;
@@ -31,7 +40,6 @@ const DataDetail = () => {
 
   const handleBuyNow = () => {
     if (data) {
-      // Dispatch addToCart action with the product details
       dispatch(
         addToCart({
           id: data.id,
@@ -40,10 +48,9 @@ const DataDetail = () => {
           category: data.category,
           prices: data.price,
           image: data.thumbnail,
-          quantity: 1, // Set default quantity to 1
+          quantity: 1,
         })
       );
-      // Navigate to the checkout page
       navigate("/checkout");
     }
   };
@@ -106,7 +113,7 @@ const DataDetail = () => {
             <button
               className="btn btn-success btn-sm"
               type="button"
-              onClick={handleBuyNow} // Use handleBuyNow on click
+              onClick={handleBuyNow}
             >
               Buy Now
             </button>
@@ -141,15 +148,6 @@ const DataDetail = () => {
           </ul>
         </div>
       </div>
-
-      {error && (
-        <div className="col-12">
-          <p className="text-danger d-flex align-items-center">
-            <MdError className="me-2" size={24} /> {/* Error icon */}
-            {`${error}`}
-          </p>
-        </div>
-      )}
     </div>
   );
 };

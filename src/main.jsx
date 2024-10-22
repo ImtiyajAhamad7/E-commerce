@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 
 import Loader from "./components/Loader.jsx";
 import { lazy } from "react";
-// import Checkout from "./components/Checkout.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 const App = lazy(() => import("./App.jsx"));
 const HomePage = lazy(() => import("./components/HomePage.jsx"));
@@ -18,6 +18,8 @@ const ProductList = lazy(() => import("./components/ProductList.jsx"));
 const Cart = lazy(() => import("./components/Cart.jsx"));
 const NotFound = lazy(() => import("./components/NotFound.jsx"));
 const Checkout = lazy(() => import("./components/Checkout.jsx"));
+const Login = lazy(() => import("./components/Login.jsx"));
+const SignUp = lazy(() => import("./components/SignUp.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -56,9 +58,11 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: (
-          <Suspense fallback={<Loader />}>
-            <Cart />
-          </Suspense>
+          <PrivateRoute>
+            <Suspense fallback={<Loader />}>
+              <Cart />
+            </Suspense>
+          </PrivateRoute>
         ),
       },
       {
@@ -66,6 +70,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loader />}>
             <Checkout />
+          </Suspense>
+        ),
+      },
+      {
+        path: "login",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Login />
+          </Suspense>
+        ),
+      },
+      {
+        path: "signup",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SignUp />
           </Suspense>
         ),
       },
